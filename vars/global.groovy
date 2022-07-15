@@ -31,6 +31,10 @@ def call(String param1, String param2){
                             stage('MostrarNombre'){
                                 println 'Nombre obtenido desde Json: ' + funciones.mostrarNombre()
                             }
+                            stage('MostrarNombre222'){
+                                println 'Nombre obtenido222 desde222 Json: ' + funciones.mostrarNombre()
+                            }
+
 
                         } catch(Exception e) {
                             error ('Ha ocurrido el siguiente error: ' + e)
