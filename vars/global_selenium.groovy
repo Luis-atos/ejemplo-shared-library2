@@ -2,7 +2,7 @@
 
 import org.cl.*
 
-def call(String param1, String param2){
+def call(String param1, String param2, String param3){
     println '******************************'
     println 'Ejecucion de selenium pipeline'
     println '******************************'
@@ -21,6 +21,8 @@ def call(String param1, String param2){
                                 println 'Inicio'
                                 println 'String 1: ' + param1
                                 println 'String 2: ' + param2
+                                println 'String 3: ' + param3
+                                
 
                         } catch(Exception e) {
                             error ('Ha ocurrido el siguiente error: ' + e)
