@@ -2,8 +2,7 @@
 
 import org.cl.*
 	
-def java_properties_jdk_version = 'JDK8_191'
-def jdkHome = tool java_properties_jdk_version
+
 def call(String param1, String param2, String param3){
      
     println '******************************'
@@ -38,6 +37,8 @@ def call(String param1, String param2, String param3){
             stage('Union'){
                  steps{
                     script{
+			       def java_properties_jdk_version = 'JDK8_191'
+                              def jdkHome = tool java_properties_jdk_version
                                 echo "Union de 2 Strings: "
                                echo "******************************"
                                 echo "Stage Union y llamamos jar"
