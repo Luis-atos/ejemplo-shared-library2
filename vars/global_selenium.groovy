@@ -31,7 +31,7 @@ def call(String param1, String param2){
             stage('Union'){
                  steps{
                     script{
-                                println 'Union de 2 Strings: '
+                                echo "Union de 2 Strings: "
                     }
                  }
             }
@@ -39,12 +39,9 @@ def call(String param1, String param2){
             stage('MostrarNombre'){
                                steps{
                     script{
-                                println 'MostrarNombre_____: '
+                                 echo "Union de 2 MostrarNombre: "
                     }
                  }
-            }
-            stage('MostrarNombre222'){
-                                println 'MostrarNombre222____: '
             }
         }
     }
