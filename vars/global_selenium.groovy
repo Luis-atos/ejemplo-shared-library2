@@ -3,15 +3,15 @@
 import org.cl.*
 
 def call(String param1, String param2, String param3){
-  
+     def java_properties_jdk_version = 'JDK8_191'
+     def jdkHome = tool java_properties_jdk_version
     println '******************************'
     println 'Ejecucion de selenium pipeline'
     println '******************************'
     pipeline{
         agent any
         stages{
-	   def java_properties_jdk_version = 'JDK8_191'
-	   def jdkHome = tool java_properties_jdk_version
+	  
             stage('Pipeline'){
                 steps{
                     script{
