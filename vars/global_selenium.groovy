@@ -14,14 +14,16 @@ def call(String param1, String param2, String param3){
                     script{
                         try {
 
-                          
-                                 echo "******************************"
-                                 echo 'Ejecucion de selenium pipeline'
-                                 echo '******************************'
+                                def java_properties_jdk_version = 'JDK8_191'
+	                            def jdkHome = tool java_properties_jdk_version
+                                echo "******************************"
+                                echo 'Ejecucion de selenium pipeline'
+                                echo '******************************'
                                 echo 'Inicio'
                                 echo 'String 1: ' + param1
                                 echo 'String 2: ' + param2
                                 echo 'String 3: ' + param3
+                            
                                 
 
                         } catch(Exception e) {
@@ -34,6 +36,10 @@ def call(String param1, String param2, String param3){
                  steps{
                     script{
                                 echo "Union de 2 Strings: "
+                               echo "******************************"
+                                echo "Stage Union y llamamos jar"
+                                echo '******************************'
+                                bat "${jdkHome}/bin/java -jar  newAppTask-0.0.1.jar "
                     }
                  }
             }
