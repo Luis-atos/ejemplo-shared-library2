@@ -4,7 +4,7 @@ import org.cl.*
 
 def call(String param1, String param2){
 
-    println 'Ejecución de Pipeline'
+    println 'Ejecución de selenium pipeline'
 
     pipeline{
         agent any
@@ -14,14 +14,14 @@ def call(String param1, String param2){
                     script{
                         try {
 
-                            def funciones   = new Funciones()
+                           println 'Inicio'
 
                             stage('Inicio'){
                                 println 'Inicio'
                                 println 'String 1: ' + param1
                                 println 'String 2: ' + param2
 
-                                gradle.call()
+                               
                             }
 
                             stage('Union'){
