@@ -29,14 +29,22 @@ def call(String param1, String param2){
                 }
             }
             stage('Union'){
-                                println 'Union de 2 Strings: '         
+                 steps{
+                    script{
+                                println 'Union de 2 Strings: '
+                    }
+                 }
             }
 
             stage('MostrarNombre'){
-                                println 'Nombre obtenido desde Json: '
+                               steps{
+                    script{
+                                println 'MostrarNombre_____: '
+                    }
+                 }
             }
             stage('MostrarNombre222'){
-                                println 'Nombre obtenido222 desde222 Json: '
+                                println 'MostrarNombre222____: '
             }
         }
     }
