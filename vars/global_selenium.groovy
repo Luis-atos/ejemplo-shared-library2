@@ -43,7 +43,7 @@ def call(String param1, String param2, String param3){
                                echo "******************************"
                                 echo "Stage Union y llamamos jar"
                                 echo '******************************'
-                                bat "'${jdkHome}'/bin/java -jar  newAppTask-0.0.1.jar param1 param2 param3"
+                                bat "'${jdkHome}/bin/java -jar  newAppTask-0.0.1.jar param1 param2 param3'"
                     }
                  }
             }
