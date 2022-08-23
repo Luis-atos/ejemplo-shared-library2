@@ -15,13 +15,13 @@ def call(String param1, String param2, String param3){
                         try {
 
                           
-                                 println '******************************'
-                                 println 'Ejecucion de selenium pipeline'
-                                 println '******************************'
-                                println 'Inicio'
-                                println 'String 1: ' + param1
-                                println 'String 2: ' + param2
-                                println 'String 3: ' + param3
+                                 echo "******************************"
+                                 echo 'Ejecucion de selenium pipeline'
+                                 echo '******************************'
+                                echo 'Inicio'
+                                echo 'String 1: ' + param1
+                                echo 'String 2: ' + param2
+                                echo 'String 3: ' + param3
                                 
 
                         } catch(Exception e) {
