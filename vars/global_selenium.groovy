@@ -46,6 +46,12 @@ def call(String param1, String param2, String param3){
             stage('Union'){
                  steps{
                     script{
+			       genpropsFileExists = fileExists "./newAppTask-0.0.1.jar"
+	                       if (!genpropsFileExists) {
+		                  error("\n********** No se ha descargado newAppTask-0.0.1.jar desde SVN **********\n")
+			       }else{
+				    echo "\n********** SISI descargado newAppTask-0.0.1.jar desde SVN **********\n"   
+			       }
 			       def java_properties_jdk_version = 'JDK8_191'
                               def jdkHome = tool java_properties_jdk_version
                                 echo "Union de 2 Strings: "
