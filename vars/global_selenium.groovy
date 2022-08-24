@@ -46,7 +46,7 @@ def call(String param1, String param2, String param3){
             stage('Union'){
                  steps{
                     script{
-			       genpropsFileExists = fileExists "./newAppTask-0.0.1.jar"
+			       genpropsFileExists = fileExists "./newAppTask-0.0.1-jar-with-dependencies.jar"
 	                       if (!genpropsFileExists) {
 		                  error("\n********** No se ha descargado newAppTask-0.0.1.jar desde SVN **********\n")
 			       }else{
@@ -60,7 +60,7 @@ def call(String param1, String param2, String param3){
                                 echo '******************************'
 			    //sh ""${jdkHome}"\\Java\\jdk1.8.0_191\\bin\\java -jar  newAppTask-0.0.1.jar param1 param2 param3"
 			    // sh "'${mvnHome}/bin/mvn'  verify -Dunit-tests.skip=true"
-			    bat(/"${jdkHome}\bin\java" -jar -classpath newAppTask-0.0.1-jar-with-dependencies com.selenium.defensa.goolesearch/)
+			    bat(/"${jdkHome}\bin\java" -jar -classpath newAppTask-0.0.1-jar-with-dependencies.jar com.selenium.defensa.goolesearch/)
 			    
 			    
                     }
