@@ -54,7 +54,7 @@ def call(String param1, String param2, String param3){
                                 echo '******************************'
 			    //sh ""${jdkHome}"\\Java\\jdk1.8.0_191\\bin\\java -jar  newAppTask-0.0.1.jar param1 param2 param3"
 			    // sh "'${mvnHome}/bin/mvn'  verify -Dunit-tests.skip=true"
-			    bat(/"${jdkHome}"\bin\java -jar" -classpath newAppTask-0.0.1.jar param1 param2 param3 com.selenium.defensa.goolesearch/)
+			    bat(/"${jdkHome}"\bin\java -jar -classpath newAppTask-0.0.1.jar param1 param2 param3 com.selenium.defensa.goolesearch/)
 			    
 			    
                     }
