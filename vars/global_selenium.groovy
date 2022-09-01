@@ -29,7 +29,7 @@ def call(String param1, String param2, String param3){
 				
 		echo 'This stage does block an executor because it inherits the "agent any" from the pipline.'
 				
-		def dataJson = readJSON file: 'nombres.json'
+		def dataJson = readJSON file: './resources/nombres.json'
 
 		echo "zapData = ${dataJson}"
 
