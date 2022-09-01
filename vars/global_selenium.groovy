@@ -27,6 +27,13 @@ def call(String param1, String param2, String param3){
                                 echo 'String 3: ' + param3
 				
 		echo 'This stage does block an executor because it inherits the "agent any" from the pipline.'
+				
+		def dataJson = readJSON file: 'nombres.json'
+
+		echo "zapData = ${dataJson}"
+
+		def servidor1Data = dataJson.servidor1
+		echo "servidor1Data = ${servidor1Data}"
             
                inputResponse = input([
               message           : 'Please confirm.',
