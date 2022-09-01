@@ -14,4 +14,12 @@ def mostrarNombre(){
 	return json.nombre
 }
 
+def leerJson(){
+	def dataJson = readJSON file: 'nombres.json'
+
+		echo "zapData = ${dataJson}"
+
+		def servidor1Data = dataJson.servidor1
+		echo "servidor1Data = ${servidor1Data}"
+}
 return this;
