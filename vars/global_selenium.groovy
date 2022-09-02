@@ -71,14 +71,15 @@ def call(String param1, String param2, String param3){
 		steps{
                     script{
 			def jenkins_libs_JSON_git_url = 'https://github.com/Luis-atos/TareaJenkinsNew.git'
-			echo " ****** GIT JSON LIBRERIAS ****** "
+			def pathWS = pwd()
+			echo " **** ${pathWS} ****** GIT JSON LIBRERIAS ****** "
 			checkout([
                         $class: 'GitSCM',
                         branches: [[name: "resourcesGit"]],
                         doGenerateSubmoduleConfigurations: false,
                         extensions: [[
                             $class: 'RelativeTargetDirectory',
-                            relativeTargetDir: "/temporal"
+				relativeTargetDir: "${pathWS}/temporal"
                         ]],
                         submoduleCfg: [],
                         userRemoteConfigs: [[
