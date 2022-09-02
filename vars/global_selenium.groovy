@@ -51,16 +51,20 @@ def call(String param1, String param2, String param3){
                     }
                 }
             }
-	    stage ("Git librerias"){
-		def jenkins_libs_git_url = 'https://github.com/Luis-atos/libs.git'   
-		echo " ****** GIT LIBRERIAS ****** "
-		// Pipeline Remote Loader Plugin
-         	fileLoader.withGit(jenkins_libs_git_url, 'rama1', 'null','') {  
-	 	echo " ****** GIT DENTRO LOADER ****** "
-			scm = fileLoader.load('libreria');
-        	}
-		scm.metodo1()
-		scm.metodo2()
+	    stage ('Git librerias'){
+		steps{
+                    script{
+			def jenkins_libs_git_url = 'https://github.com/Luis-atos/libs.git'   
+			echo " ****** GIT LIBRERIAS ****** "
+			// Pipeline Remote Loader Plugin
+			fileLoader.withGit(jenkins_libs_git_url, 'rama1', 'null','') {  
+			echo " ****** GIT DENTRO LOADER ****** "
+				scm = fileLoader.load('libreria');
+			}
+			scm.metodo1()
+			scm.metodo2()
+		    }
+		}
    
       	    }
             stage('Union'){
