@@ -92,6 +92,17 @@ def call(String param1, String param2, String param3){
 		}
    
       	    }
+	    stage ('leer JSON de Git librerias'){
+		steps{
+                    script{
+			def dataJson = readJSON file: './temporal/resources/parametros.json'
+		        echo "jsonData = ${dataJson}"
+		        def servidor1Data = dataJson.servidor1
+		        echo "servidor1Data = ${servidor1Data}"
+		    }
+		}
+   
+      	    }
             stage('Union'){
                  steps{
                     script{
