@@ -67,6 +67,29 @@ def call(String param1, String param2, String param3){
 		}
    
       	    }
+	    stage ('Git leer JSON de libreria'){
+		steps{
+                    script{
+			def jenkins_libs_JSON_git_url = 'https://github.com/Luis-atos/TareaJenkinsNew.git'
+			checkout([
+                        $class: 'GitSCM',
+                        branches: [[name: "resourcesGit"]],
+                        doGenerateSubmoduleConfigurations: false,
+                      //  extensions: [[
+                      //      $class: 'RelativeTargetDirectory',
+                      //      relativeTargetDir: "C:/ProgramData/Jenkins/.jenkins/workspace/luis"
+                      //  ]],
+                        submoduleCfg: [],
+                        userRemoteConfigs: [[
+                            credentialsId: '',
+                            url: 'https://github.com/Luis-atos/TareaJenkinsNew.git'
+                        ]]
+                    ])
+			
+		    }
+		}
+   
+      	    }
             stage('Union'){
                  steps{
                     script{
