@@ -77,7 +77,7 @@ def call(String param1, String param2, String param3){
                         doGenerateSubmoduleConfigurations: false,
                         extensions: [[
                             $class: 'RelativeTargetDirectory',
-                            relativeTargetDir: "/resources"
+                            relativeTargetDir: "/temporal"
                         ]],
                         submoduleCfg: [],
                         userRemoteConfigs: [[
