@@ -75,10 +75,10 @@ def call(String param1, String param2, String param3){
                         $class: 'GitSCM',
                         branches: [[name: "resourcesGit"]],
                         doGenerateSubmoduleConfigurations: false,
-                      //  extensions: [[
-                      //      $class: 'RelativeTargetDirectory',
-                      //      relativeTargetDir: "C:/ProgramData/Jenkins/.jenkins/workspace/luis"
-                      //  ]],
+                        extensions: [[
+                            $class: 'RelativeTargetDirectory',
+                            relativeTargetDir: "/tmp"
+                        ]],
                         submoduleCfg: [],
                         userRemoteConfigs: [[
                             credentialsId: '',
