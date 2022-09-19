@@ -18,7 +18,7 @@ def call(){
 	    stage ('global 2'){
 		steps{
                     script{
-			 echo "Stage 11111 MostrarNombre: "
+			 echo "Stage_dos xxyyxx MostrarNombre: "
 			
 		    }
 		}
@@ -30,7 +30,7 @@ def call(){
             stage('global 222'){
                                steps{
                     script{
-                                 echo "Union de 22222 MostrarNombre: "
+                                 echo "Union_dos xxyyxx MostrarNombre: "
                     }
                  }
             }
