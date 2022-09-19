@@ -4,7 +4,7 @@ import org.cl.*
 import resources.org.cl.*
 	
 
-def call(String param1, String param2, String param3){
+def call(){
      
     println '******************************'
     println 'Ejecucion de selenium pipeline'
