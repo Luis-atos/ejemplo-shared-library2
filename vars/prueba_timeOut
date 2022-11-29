@@ -1,0 +1,21 @@
+pipeline {
+     agent any
+    stages{
+     
+        stage("One"){
+            steps {
+            script{
+             timeout(unit: 'SECONDS', time: 5) {
+             sleep 10
+             echo 'hello'
+            }
+          }
+            }
+        }
+    stage("dos"){
+          steps {
+         echo 'dos dos'
+          }
+    }
+    }
+}
