@@ -25,7 +25,7 @@ pipeline {
 			echo " **** ${pathWS} ****** GIT JSON LIBRERIAS ****** "
 			checkout([
                         $class: 'GitSCM',
-                        branches: [[name: "resourcesGit"]],
+                        branches: [[name: "develop"]],
                         doGenerateSubmoduleConfigurations: false,
                         extensions: [[
                             $class: 'RelativeTargetDirectory',
@@ -33,7 +33,7 @@ pipeline {
                         ]],
                         submoduleCfg: [],
                         userRemoteConfigs: [[
-                            credentialsId: 'lmunma1',
+                            credentialsId: 'jenkins120_GitLab',
                             url: 'git@git.servdev.mdef.es:sistemas/experimentos/papelera/EXPERIMENTO_ASODEF.git'
                         ]]
                     ])
