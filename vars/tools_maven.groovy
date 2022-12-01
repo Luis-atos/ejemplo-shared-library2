@@ -40,7 +40,8 @@ pipeline {
 			
              sleep 2
              echo 'hello'
-			 sh 'mvn clean compile'
+			// sh 'mvn clean compile'
+		    sh ' mvn -f pom.xml clean install
           }
             }
         }
