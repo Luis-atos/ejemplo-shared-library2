@@ -27,7 +27,7 @@ pipeline {
                         submoduleCfg: [],
                         userRemoteConfigs: [[
                             credentialsId: 'jenkins120_GitLab',
-                            url: 'git@git.servdev.mdef.es:sistemas/experimentos/papelera/newmachine120.git'
+                            url: 'git@git.servdev.mdef.es:sistemas/experimentos/papelera/pruebatest.git'
                         ]]
                     ])
 			
