@@ -40,7 +40,7 @@ pipeline {
 			
              sleep 2
              echo 'hello'
-			 sh 'mvn -Djdk.tls.maxCertificateChainLength=20 -Djavax.net.ssl.trustStore=/etc/pki/ca-trust/extracted/java/cacerts -Djava.net.ssl.trustStorePassword=changeit -f pom.xml clean compile'
+			 sh 'mvn -Djdk.tls.maxCertificateChainLength=20 -Djavax.net.ssl.trustStore=/etc/pki/ca-trust/extracted/java/cacerts -Djava.net.ssl.trustStorePassword=changeit -f pom.xml clean compile sonar:sonar -Dsonar.login=Developer -Dsonar.password=Developer'
           }
             }
         }
