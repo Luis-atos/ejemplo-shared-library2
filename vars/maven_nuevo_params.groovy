@@ -40,7 +40,7 @@ pipeline {
 			
              sleep 2
              echo 'hello'
-		         def output = sh(script: "mvn -Djdk.tls.maxCertificateChainLength=20 -Djavax.net.ssl.trustStore=/etc/pki/ca-trust/extracted/java/cacerts -Djava.net.ssl.trustStorePassword=changeit -f pom.xml clean install dependency:copy-dependencies sonar:sonar -Dsonar.login=Developer -Dsonar.password=Developer", returnStdout: true)
+		         def output = sh(script: 'mvn -Djdk.tls.maxCertificateChainLength=20 -Djavax.net.ssl.trustStore=/etc/pki/ca-trust/extracted/java/cacerts -Djava.net.ssl.trustStorePassword=changeit -f pom.xml clean install dependency:copy-dependencies sonar:sonar -Dsonar.login=Developer -Dsonar.password=Developer', returnStdout: true)
 		         def taskUrl = output.find(~"http://divindesonar.mdef.es:9000/api/ce/task\\?id=[\\w-]*")
 			// sh 'mvn -Djdk.tls.maxCertificateChainLength=20 -Djavax.net.ssl.trustStore=/etc/pki/ca-trust/extracted/java/cacerts -Djava.net.ssl.trustStorePassword=changeit -f pom.xml clean install dependency:copy-dependencies sonar:sonar -Dsonar.login=Developer -Dsonar.password=Developer'
 			 sleep 5
