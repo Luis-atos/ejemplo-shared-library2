@@ -1,3 +1,4 @@
+def taskUrl
 pipeline {
      agent any
 	 tools{
@@ -41,7 +42,7 @@ pipeline {
              sleep 2
              echo 'hello'
 		         def output = sh(script: 'mvn -Djdk.tls.maxCertificateChainLength=20 -Djavax.net.ssl.trustStore=/etc/pki/ca-trust/extracted/java/cacerts -Djava.net.ssl.trustStorePassword=changeit -f pom.xml clean install dependency:copy-dependencies sonar:sonar -Dsonar.login=Developer -Dsonar.password=Developer', returnStdout: true)
-		         def taskUrl = output.find(~"http://divindesonar.mdef.es:9000/api/ce/task\\?id=[\\w-]*")
+		         taskUrl = output.find(~"http://divindesonar.mdef.es:9000/api/ce/task\\?id=[\\w-]*")
 			// sh 'mvn -Djdk.tls.maxCertificateChainLength=20 -Djavax.net.ssl.trustStore=/etc/pki/ca-trust/extracted/java/cacerts -Djava.net.ssl.trustStorePassword=changeit -f pom.xml clean install dependency:copy-dependencies sonar:sonar -Dsonar.login=Developer -Dsonar.password=Developer'
 			 sleep 5
 			 sh "java -cp 'target/dependency/testng-7.4.0.jar:target/dependency/jcommander-1.81.jar:target/dependency/jquery-3.5.1.jar:${env.WORKSPACE}/target/classes:target/surefire-reports/*' org.testng.TestNG ${env.WORKSPACE}/testng.xml"
@@ -53,7 +54,7 @@ pipeline {
          echo 'dos dos'
 		//  def output = sh(script: "mvn -f source/${RutaPom}pom.xml clean install ${ParametrosMaven} sonar:sonar -Dsonar.login=Developer -Dsonar.password=Developer ${paramSonar}", returnStdout: true)
 		//  url = output.find(~"http://divindesonar.mdef.es:9000/api/ce/task\\?id=[\\w-]*")
-		  def sonarData = readJSON text: sh(script: "curl -k -u Developer:Developer " + taskUrl, returnStdout: true)
+		  def sonarData = readJSON text: sh(script: "curl -u Sonarqube_analysis: " + taskUrl, returnStdout: true)
 		  echo "---->" + sonarData.toString()
           }
     }
