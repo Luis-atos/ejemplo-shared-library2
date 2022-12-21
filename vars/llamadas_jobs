@@ -1,3 +1,44 @@
+@Library('JenkinsFileComun') _
+
+def params = [:]   
+pipeline{
+   agent any
+  
+    
+   
+    stages{ 
+       stage('Download params'){
+          steps{
+             script{
+            echo "********************************************************"
+            def pathWS = pwd()
+            echo "*****${pathWS}************"
+            def libscheckout = new divindes.libs.checkout.checkoutParams()
+            libscheckout.paramsDownload(pathWS, env.JOB_NAME)
+            echo "********************************************************"
+          }
+          }
+       }
+         stage('Download params_app'){
+            steps{
+               script{
+                  build job: 'PIPELINE-INICIO', wait: false, parameters: [string(name: "GIT_URL", 
+                              value: 'git@git.servdev.mdef.es:sistemas/experimentos/papelera/experimento-auditoria-back-migracion.git')]
+               }
+            }
+         }
+         stage('segundo stage'){
+            steps{
+               script{
+                echo "segundo stage"
+               }
+            }
+         }
+    }          
+      
+  }
+***************************************************************
+
 
 @Library('JenkinsFileComun') _
 
