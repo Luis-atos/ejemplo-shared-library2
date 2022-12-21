@@ -1,0 +1,32 @@
+@Library('JenkinsFileComun') _
+node{
+    def params = [:]
+         stage('Download params_app'){
+                  build job: 'PIPELINE-INICIO', wait: false, parameters: [string(name: "GIT_URL", 
+                              value: 'git@git.servdev.mdef.es:sistemas/experimentos/papelera/experimento-auditoria-back-migracion.git')]
+            }
+}
+**** ESTE ES EL PIPELINE LLAMADO DESDE ARRIBA  PIPELINE-INICIO ******
+pipeline {
+    agent any
+   
+   parameters {
+         string(defaultValue: '', description: 'K', name: 'GIT_URL')
+    }
+
+    stages {
+        stage('Checkout Git repository') {
+           steps {
+               echo "--->>>>  ${params.GIT_URL} "
+              //  git branch: 'master', url: "${params.URL}"
+            }
+        }
+
+        stage('Checkout Git prams') {
+           steps {
+               echo "--->>>>  ${params.GIT_URL}"
+              //  git branch: 'master', url: "${params.URL}"
+            }
+        }
+    }
+}
