@@ -1,3 +1,28 @@
+
+@Library('JenkinsFileComun') _
+
+def params = [:]   
+pipeline{
+   agent any
+  
+    
+   
+    stages{ 
+         stage('Download params_app'){
+            steps{
+                  build job: 'PIPELINE-INICIO', wait: false, parameters: [string(name: "GIT_URL", 
+                              value: 'git@git.servdev.mdef.es:sistemas/experimentos/papelera/experimento-auditoria-back-migracion.git')]
+            }
+         }
+         stage('segundo stage'){
+            steps{
+                echo "segundo stage"
+            }
+         }
+    }          
+      
+  }
+******************************************************************************
 @Library('JenkinsFileComun') _
 node{
     def params = [:]
