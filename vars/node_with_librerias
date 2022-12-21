@@ -1,0 +1,237 @@
+@Library('JenkinsFileComun') _
+node{
+   
+  //  def GIT_PARAMS = 'git@git.servdev.mdef.es:sistemas/integracion-continua/jenkins_params_apps.git'
+    
+    def params = [:]
+        
+         stage('Download params_app'){
+           
+               
+               
+                  build job: 'PIPELINE-INICIO', wait: false, parameters: [string(name: "GIT_URL", 
+                              value: 'git@git.servdev.mdef.es:sistemas/experimentos/papelera/experimento-auditoria-back-migracion.git')]
+            }
+                
+        /*
+        stage('Download App'){
+           echo "********************************************************"
+            def pathWS = pwd()
+             echo "*****${pathWS}************"
+            def libscheckout = new divindes.libs.checkout.functionsCheckout()
+            libscheckout.appDownload(pathWS, env.BRANCH_NAME, GIT_URL)
+            echo "********************************************************"
+        }
+        stage('Parametros Ejecucion'){
+           
+           echo "********************************************************"
+            def pathWS = pwd()
+             echo "*****${pathWS}************"
+            def libscheckout = new divindes.libs.checkout.functionsCheckout()
+            libscheckout.paramsDownload(pathWS, env.JOB_NAME)
+            echo "********************************************************"
+            
+            def appData = readJSON text: 'pathWS/temporal/params_app.json'
+            echo " ----  ${appData} ------"
+         }
+         stage('numero Version'){         
+
+            echo "********************************************************"
+            def libsjenkins = new divindes.libs.jenkins.functionsJenkins()
+            libsjenkins.obtenerVersion(env.BRANCH_NAME,env.JOB_NAME)
+            echo "********************************************************"
+           
+         }
+         stage('Eleccion entorno'){         
+
+            echo "********************************************************"
+            def libsjenkins = new divindes.libs.jenkins.functionsJenkins()
+            def salida = libsjenkins.eleccionEntorno(env.BRANCH_NAME)
+            echo " --->  ---> ${salida} "
+            env.ENTORNO = salida
+            echo "********************************************************"
+            //////////////////////////////////////
+            ///        EJECUTA PIPELINE        ///
+            /////////////////////////////////////
+            exec_pipeline_01(params)
+         }
+         */
+  }
+***************** abajo la libreria  en ruta jenkins-modules-apps src divindes libs jenkins functionsJenkins.groovy **********
+
+package divindes.libs.jenkins
+
+def obtenerVersion(String ramaEjecutada, String JOB_NAME){
+    
+   if(ramaEjecutada.matches("master")){
+        // Si no hay versión de entrada, indica que la tarea ha sido lanzada automáticamente para indexar la rama.
+            echo "La Rama ha sido Indexada correctamente."
+            currentBuild.result = 'NOT_BUILT'
+            return
+    }
+ 
+   // jobBaseName = "${env.JOB_NAME}".split('/')[0]
+    jobBaseName = "${JOB_NAME}".split('/')[0]
+
+    try {
+        timeout(time: 30, unit: 'SECONDS') { 
+                                        
+            if((!ramaEjecutada.matches("HOTFIX(.*)")) && (!ramaEjecutada.matches("RELEASE(.*)"))){
+                def INPUT_PARAMS = input(
+                id: 'env.VERSION', 
+                message: 'Versión a desplegar', 
+                parameters: [
+                [$class: 'StringParameterDefinition', defaultValue: '0', description: 'Version Major', name: 'MAJOR'],
+                [$class: 'StringParameterDefinition', defaultValue: '0', description: 'Version Minor', name: 'MINOR'],
+                [$class: 'StringParameterDefinition', defaultValue: '0', description: 'Version parcheo de bugfix', name: 'PATCH']
+                ]);
+                
+                MAJOR = INPUT_PARAMS.MAJOR;
+                MINOR = INPUT_PARAMS.MINOR;
+                PATCH = INPUT_PARAMS.PATCH;
+            } else {
+            
+                VERSION_RAMA =  "${ramaEjecutada}".split('-')[1].tokenize(".")
+                    MAJOR = VERSION_RAMA[0].toString()
+                    MINOR = VERSION_RAMA[1].toString()
+                    PATCH = VERSION_RAMA[2].toString()
+            }
+
+        }
+    } catch(err) { // timeout reached or input false
+        user = err.getCauses()[0].getUser().toString()
+        if (user.toString() == 'SYSTEM') {  // Si el usuario es SYSTEM, es un timeout
+        echo "Job abortado por TIMEOUT en la selección de versión"
+        } else {  // if not and input is false it's the user
+        echo "Job cancelado por usuario: [${user}]"
+        }
+        currentBuild.result = 'ABORTED'
+        throw new hudson.AbortException('')
+    }
+    echo ("Versión: "+ MAJOR + "." + MINOR + "." + PATCH)
+}
+//**********************************************************************************************************
+def eleccionEntorno(String ramaEjecutada){
+    def entornoSelect =""
+     def env_desa = 'Desarrollo'
+     def env_pre  = 'Pre-produccion'
+     def env_pro  = 'Produccion'
+     def env_val  = 'Validacion'
+     def env_hotf = 'Hotfix'
+
+    if (ramaEjecutada == 'develop' || (ramaEjecutada.matches("feature(.*)"))) {
+        entornoSelect = "${env_desa}"
+    }else if (ramaEjecutada.matches("HOTFIX(.*)")){
+          entornoSelect = "${env_hotf}"
+    }else if (ramaEjecutada.matches("RELEASE(.*)")){
+         entornoSelect = "${env_pro}"
+    }
+  /*  sh '''
+        mkdir -p bin
+        mkdir -p conf
+        mkdir -p doc
+    '''
+            if (params.ExisteBD!=""){
+                sh '''                            
+                    mkdir -p bd
+                '''
+            }
+            if (params.ExisteRPT!="0"){
+                sh '''                            
+                    mkdir -p rpt
+                '''
+            }
+ */                               
+                                
+                            //    VERSION_POM = VERSION;
+                                try {
+                                    timeout(time: 30, unit: 'SECONDS') { 
+                                        if(entornoSelect  == 'Desarrollo'){
+                                            try {
+                                                def entornos = "${env_desa}\n${env_val}\n${env_pre}"
+                                                if (    (ramaEjecutada.matches("feature(.*)"))){
+                                                   entornos = "${env_desa}\n${env_val}"
+                                                }
+                                                // Se muestra un formulario para elegir en que entorno se quiere desplegar
+                                                entornoSelect  = input(message: 'Interacción Usuario requerido',
+                                                ok: 'Seleccionar',
+                                                parameters: [choice(name: 'Elección Entorno', choices: "${entornos}", description: '¿Sobre qué entorno deseas desplegar?')])
+                                            
+                                            } catch(err) {        // Si Cancelamos el formulario.    
+                                                user = err.getCauses()[0].getUser().toString()
+                                                if (user.toString() == 'SYSTEM') {  // Si el usuario es SYSTEM, es un timeout
+                                                echo "Job abortado por TIMEOUT en la selección del entorno"
+                                                } else {  // if not and input is false it's the user
+                                                echo "Job cancelado por usuario: [${user}]"
+                                                }
+                                                currentBuild.result = 'ABORTED'
+                                                throw new hudson.AbortException('')
+                                            }
+                                        } else if(entornoSelect == 'Produccion'){
+                                            try {
+                                                def entornos = "${env_val}\n${env_pre}\n${env_pro}"
+                                                def descripcion = "¿Desea desplegar en VALIDACIÓN, actualizar PREPRODUCCIÓN o integrar en PRODUCCIÓN?"
+                                                if (ramaEjecutada.matches("RELEASE(.*)")){
+                                                    entornos = "${env_desa}\n${env_val}\n${env_pre}\n${env_pro}"
+                                                    descripcion = "¿Desea desplegar en DESARROLLO, VALIDACIÓN, actualizar PREPRODUCCIÓN o integrar en PRODUCCIÓN?"
+                                                }
+                                                // Se muestra un formulario para elegir en que entorno se quiere desplegar
+                                                entornoSelect  = input(message: 'Interacción Usuario requerido',
+                                                ok: 'Seleccionar',
+                                                parameters: [choice(name: 'Elección Entorno', choices: "${entornos}", description: "${descripcion}")])
+                                            
+                                            } catch(err) {        // Si Cancelamos el formulario.
+                                                user = err.getCauses()[0].getUser().toString()
+                                                if (user.toString() == 'SYSTEM') {  // Si el usuario es SYSTEM, es un timeout
+                                                echo "Job abortado por TIMEOUT en la selección del entorno"
+                                                } else {  // if not and input is false it's the user
+                                                echo "Job cancelado por usuario: [${user}]"
+                                                }
+                                                currentBuild.result = 'ABORTED'
+                                                throw new hudson.AbortException('')
+                                            }
+                                            
+                                        }
+                                    }
+                                } catch(err) { // timeout reached or input false
+                                    user = err.getCauses()[0].getUser().toString()
+                                    if (user.toString() == 'SYSTEM') {  // Si el usuario es SYSTEM, es un timeout
+                                    echo "Job abortado por TIMEOUT en la selección del entorno"
+                                    } else {  // if not and input is false it's the user
+                                    echo "Job cancelado por usuario: [${user}]"
+                                    }
+                                    currentBuild.result = 'ABORTED'
+                                    throw new hudson.AbortException('')
+                                }
+
+                            /*    if(entornoSelect == 'Produccion' || entornoSelect == 'Hotfix'){
+                                    //input(id: 'DesplegadoProduccion', message: '¿Está seguro que no existen errores en PRODUCCIÓN?\n\n Si continua, se hará merge con Rama Master y se eliminará la Rama '+env.BRANCH_NAME+'.')
+                                    input(id: 'DesplegadoProduccion', message: 'Esta tarea no despliega en PRODUCCIÓN\n\n Si no existen errores y acepta continuar, se hará merge con Rama Master y se eliminará la Rama '+env.BRANCH_NAME+'.')                                       
+                            }
+            */
+                              //  if(entornoSelect == 'Produccion'){
+                              //      VERSION_POM = "${env.BRANCH_NAME}".split('-')[1]
+                             //   }
+                             //   print env.ENTORNO
+                                
+                             //   if(entornoSelect != 'Desarrollo'){
+                                /*    sshagent(['jenkins-generated-ssh-key']) {
+                                        
+                                        // Modificamos la versión del proyecto
+                                        sh "mvn -f source/${params.RutaPom}pom.xml versions:set -DgenerateBackupPoms=false -DnewVersion=${VERSION_POM}"
+                                        sh "git add ."
+                                        sh "git diff-index --quiet ${BRANCH_NAME} || git commit -m 'Actualizamos POM'"
+                                        sh "git push -f origin ${BRANCH_NAME}"
+                                    }
+                                    */
+                              //  }
+                            print entornoSelect;
+                            return entornoSelect;
+    
+}
+return this
+
+
+
+
+
