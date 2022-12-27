@@ -1,0 +1,23 @@
+@Library('JenkinsFileComun') _
+pipeline {
+    agent any
+   
+   parameters {
+         string(defaultValue: '', description: 'rama_app', name: 'branch_URL')
+         string(defaultValue: '', description: 'job_name', name: 'job_name')
+         string(defaultValue: '', description: 'path_app', name: 'path_app')
+    }
+
+    stages {
+        stage('Version') {
+           steps {
+               script {
+                   echo "--->>>>  ${params.branch_URL} "
+                   echo "--->>>>  ${params.job_name} "
+                    echo "--->>>> ${params.path_app} "
+                   
+               }
+            }
+        }
+    }
+}
