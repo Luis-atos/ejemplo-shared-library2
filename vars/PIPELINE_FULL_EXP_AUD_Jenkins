@@ -1,0 +1,71 @@
+@Library('JenkinsFileComun') _
+
+def pathWS=''
+pipeline{
+   agent any
+   
+   
+   
+    stages{ 
+       
+       stage('Download params'){
+         steps{
+         script{
+            pathWS = pwd()
+            def libscheckout = new divindes.libs.checkout.checkoutParams()
+            libscheckout.paramsDownload(pathWS, env.JOB_NAME)
+            libscheckout.fichSHDownload(pathWS, 'ficheros_SH')
+            
+
+          }
+          }
+       }
+         stage('Download app_branch'){
+            steps{
+               script{
+                  build job: 'PIPELINE-CHECKOUT', wait: false, parameters: [
+                  string(name: "GIT_URL",value: 'git@git.servdev.mdef.es:sistemas/experimentos/papelera/experimento-auditoria-back-migracion.git'),
+                  string(name: "branch_URL",value: env.BRANCH_NAME),
+                  string(name: "path_app",value: pathWS),
+                  ]
+               }
+            }
+         }
+        
+         stage('Obtener Version'){
+            steps{
+               script{
+               /* build job: 'PIPELINE-VERSION', wait: true, parameters: [
+                  string(name: "branch_URL",value: env.BRANCH_NAME), 
+                  string(name: "job_name",value: env.JOB_NAME),
+                  string(name: "path_app",value: pathWS),
+                  ]
+               */
+                  echo "********************************************************"
+                   def libsObtenVersion = new divindes.libs.jenkins.functionsJenkins()
+                   libsObtenVersion.obtenerVersion(env.BRANCH_NAME, env.JOB_NAME)
+                   echo "********************************************************"
+               }
+            }
+         }
+         stage('Entorno'){
+            steps{
+               script{
+                build job: 'PIPELINE-ENTORNO', wait: true, parameters: [
+                  string(name: "branch_URL",value: env.BRANCH_NAME), 
+                  string(name: "job_name",value: env.JOB_NAME),
+                  string(name: "path_app",value: pathWS),
+                  ]
+               
+                  echo "********************************************************"
+                   def libsEntorno = new divindes.libs.jenkins.functionsEntornos()
+                   libsEntorno.eleccionEntorno(env.BRANCH_NAME)
+                   echo "********************************************************"
+                   
+               
+               }
+            }
+         }
+    }          
+      
+  }
