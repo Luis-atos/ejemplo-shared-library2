@@ -1,3 +1,13 @@
+ sh 'curl -v -k \
+    -F "r=releases" \
+    -F "g=PruebaTest" \
+    -F "a=PruebaTest-0.0.1" \
+    -F "v=0.0.1" \
+    -F "p=zip" \
+    -F "file=@./PruebaTest-0.0.1_SNAPSHOT.zip" \
+    -u deployment:cc0msi2016 \
+     https://nexus.servdev.mdef.es/repository/artifacts/'
+**********
 def taskUrl
 pipeline {
      agent any
