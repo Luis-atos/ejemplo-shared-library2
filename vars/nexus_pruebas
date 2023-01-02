@@ -1,0 +1,76 @@
+def taskUrl
+pipeline {
+     agent any
+	 tools{
+	   maven "apache-maven-3.8.6"
+	   jdk "jdk1.8.0_321"
+	 }
+    stages{
+        stage("inicializa"){
+		steps{
+		  echo " **** variables ****** de MAVEN ****** "
+		}
+		}
+	    stage("tres"){
+        steps{
+                    script{
+			
+			def pathWS = pwd()
+			echo " **** ${pathWS} ****** GIT JSON LIBRERIAS ****** "
+			checkout([
+                        $class: 'GitSCM',
+                        branches: [[name: "feature_selenium"]],
+                        doGenerateSubmoduleConfigurations: false,
+                 //       extensions: [[
+                  //          $class: 'RelativeTargetDirectory',
+			//	relativeTargetDir: "/var/lib/jenkins/workspace/pipeline_prueba"
+              //          ]],
+                        submoduleCfg: [],
+                        userRemoteConfigs: [[
+                            credentialsId: 'jenkins120_GitLab',
+                            url: 'git@git.servdev.mdef.es:sistemas/experimentos/papelera/pruebatest.git'
+                        ]]
+                    ])
+			
+		    }
+		}
+    }
+        stage("One"){
+            steps {
+            script{
+			
+             sleep 2
+             echo 'hello'
+		         def output = sh(script: 'mvn -Djdk.tls.maxCertificateChainLength=20 -Djavax.net.ssl.trustStore=/etc/pki/ca-trust/extracted/java/cacerts -Djava.net.ssl.trustStorePassword=changeit -f pom.xml clean install dependency:copy-dependencies sonar:sonar -Dsonar.login=Developer -Dsonar.password=Developer', returnStdout: true)
+		   
+ sh 'curl -v \
+    -F "r=releases" \
+    -F "g=PruebaTest" \
+    -F "a=PruebaTest-0.0.1" \
+    -F "v=0.0.1" \
+    -F "p=zip" \
+    -F "file=@./PruebaTest-0.0.1_SNAPSHOT.zip" \
+    -u lmunma1:Minisdef0123488 \
+     https://nexus.servdev.mdef.es/repository/artifacts/'
+		         
+		         taskUrl = output.find(~"http://divindesonar.mdef.es:9000/api/ce/task\\?id=[\\w-]*")
+		         echo "---->" + taskUrl
+		    withCredentials([string(credentialsId: 'secret_TOKEN_sonarqube', variable: 'secret')]) {
+			    def sonarData = readJSON text: sh(script: "curl -u ${secret}: " + taskUrl, returnStdout: true)
+                    }
+		        // def sonarData = readJSON text: sh(script: "curl -u e137cb4e88e85bc1a25684db220b9e1110ac8ac0: " + taskUrl, returnStdout: true)
+			// sh 'mvn -Djdk.tls.maxCertificateChainLength=20 -Djavax.net.ssl.trustStore=/etc/pki/ca-trust/extracted/java/cacerts -Djava.net.ssl.trustStorePassword=changeit -f pom.xml clean install dependency:copy-dependencies sonar:sonar -Dsonar.login=Developer -Dsonar.password=Developer'
+			 sleep 5
+			// sh "java -cp 'target/dependency/testng-7.4.0.jar:target/dependency/jcommander-1.81.jar:target/dependency/jquery-3.5.1.jar:${env.WORKSPACE}/target/classes:target/surefire-reports/*' org.testng.TestNG ${env.WORKSPACE}/testng.xml"
+          }
+            }
+        }
+    stage("dos"){
+          steps {
+         echo 'dos dos'
+
+          }
+    }
+    
+    }
+}
