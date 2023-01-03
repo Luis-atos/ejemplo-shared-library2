@@ -1,0 +1,27 @@
+@Library('JenkinsFileComun') _
+pipeline {
+    agent any
+   
+   parameters {
+         string(defaultValue: '', description: 'job_name', name: 'job_name')
+         string(defaultValue: '', description: 'path_params', name: 'path_params')
+    }
+
+    stages {
+        stage('Checkout params') {
+           steps {
+               script {
+                   echo "--->>>>  ${params.job_name} "
+                   echo "--->>>>  ${params.path_params} "
+                   echo "********************************************************"
+                  
+                   def libscheckout = new divindes.libs.checkout.checkoutParams()
+                   libscheckout.paramsDownload(params.path_params, params.job_name)
+                   libscheckout.fichSHDownload(params.path_params, 'ficheros_SH')
+                   
+                   echo "********************************************************"
+               }
+            }
+        }
+    }
+}
