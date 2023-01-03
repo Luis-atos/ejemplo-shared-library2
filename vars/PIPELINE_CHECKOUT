@@ -1,0 +1,27 @@
+@Library('JenkinsFileComun') _
+pipeline {
+    agent any
+   
+   parameters {
+         string(defaultValue: '', description: 'Repositorio_app', name: 'GIT_URL')
+         string(defaultValue: '', description: 'rama_app', name: 'branch_URL')
+         string(defaultValue: '', description: 'path_app', name: 'path_app')
+    }
+
+    stages {
+        stage('Checkout Git repository') {
+           steps {
+               script {
+                   echo "--->>>>  ${params.GIT_URL} "
+                   echo "--->>>>  ${params.branch_URL} "
+                   echo "********************************************************"
+                   def pathWS = pwd()
+                   echo "*****${pathWS}************"
+                   def libscheckout = new divindes.libs.checkout.checkoutApp()
+                   libscheckout.appDownload(params.path_app, params.branch_URL, params.GIT_URL)
+                   echo "********************************************************"
+               }
+            }
+        }
+    }
+}
