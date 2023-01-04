@@ -3,7 +3,6 @@ pipeline {
     agent any
    
    parameters {
-         string(defaultValue: '', description: 'Repositorio_app', name: 'GIT_URL')
          string(defaultValue: '', description: 'rama_app', name: 'branch_URL')
          string(defaultValue: '', description: 'path_app', name: 'path_app')
     }
@@ -18,7 +17,7 @@ pipeline {
                    def pathWS = pwd()
                    echo "*****${pathWS}************"
                    def libsBuild = new divindes.libs.build.functionsBuild()
-                   libsBuild.buildProyect(params.path_app, params.branch_URL, params.GIT_URL)
+                   libsBuild.buildProyect(params.branch_URL,params.path_app)
                    echo "***********************************************************************"
                }
             }
