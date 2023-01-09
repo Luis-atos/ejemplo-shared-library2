@@ -1,3 +1,13 @@
+echo "******************** Download app_branch  ************************************"
+                  pathWS = pwd()
+                  build job: 'PIPELINE_CHECKOUT', wait: false, parameters: [
+                  string(name: "GIT_URL",value: params.GIT_URL),
+                  string(name: "branch_URL",value: env.BRANCH_NAME),
+                  string(name: "path_app",value: pathWS),
+                  ]
+
+
+****************************************
 @Library('JenkinsFileComun') _
 pipeline {
     agent any
