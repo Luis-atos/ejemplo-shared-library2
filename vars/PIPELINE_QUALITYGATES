@@ -3,6 +3,26 @@ pipeline {
     agent any
    
    parameters {
+         string(defaultValue: '', description: 'URL_Sonar', name: 'task_Url')
+    }
+    stages {
+        stage('check_QualityGates Sonar') {
+           steps {
+               script {
+                   def libSonar = new divindes.libs.sonar.functionsQualityGates()
+                   libSonar.QualityGates(params.task_Url)
+               }
+            }
+        }
+    }
+}
+
+*****************************************************************+
+@Library('JenkinsFileComun') _
+pipeline {
+    agent any
+   
+   parameters {
          string(defaultValue: '', description: 'task_Url', name: 'task_Url')
     }
 
