@@ -1,0 +1,54 @@
+@Library('JenkinsFileComun') _
+pipeline {
+    agent any
+   
+   parameters {
+         string(defaultValue: '', description: 'task_Url', name: 'task_Url')
+    }
+
+    stages {
+        stage('Quality Gates Report') {
+           steps {
+               script {
+                  def exit = false
+                                timeout(time:(20), unit: 'MINUTES') { 
+                                    while(!exit){
+                                        sleep 5
+                                       def sonarData = readJSON text: sh(script: "curl -k -u Developer:Developer " + params.task_Url, returnStdout: true)
+                                        echo "---->" + sonarData.toString()
+                                        try {
+                                            if(sonarData.task.status == "SUCCESS") {
+                                            exit = true
+                                            echo "Sonar: Análisis Finalizado"
+                                            def qualityGateData = readJSON text: sh(script: "curl -k -u Developer:Developer http://divindesonar.mdef.es:9000/api/qualitygates/project_status?projectKey=" + sonarData.task.componentKey, returnStdout: true)
+                                            echo qualityGateData.toString()
+                                            if(qualityGateData.projectStatus.status != "OK"){
+                                                exit = true
+                                                error "SONAR: QUALITY GATES NOT OK"
+                                                currentBuild.result = "FAILURE"
+                                            } else {
+                                                echo "Sonar: Quality Gates OK"
+                                            }
+                                            } else if(sonarData.task.status == "CANCELED") {
+                                                exit = true                                                                  
+                                                error "SONAR: Despliegue rechazado debido a baja calidad del software: ${qg.status}"
+                                                currentBuild.result = 'ABORTED'
+                                            } else if(sonarData.task.status == "FAILED"){
+                                                exit = true
+                                                error "SONAR: Despliegue rechazado debido a baja calidad del software: ${qg.status}"
+                                                currentBuild.result = "FAILURE"
+                                            } else {
+                                                echo "Seguimos pendiente de análisis: " + sonarData.task.status
+                                            }
+                                        }catch(err) {
+                                                error "SONAR: Hay un error al realizar la llamada a Sonar: "+ err
+                                                exit = true;
+                                        }
+                                    }
+                                    }
+
+               }
+            }
+        }
+    }
+}
