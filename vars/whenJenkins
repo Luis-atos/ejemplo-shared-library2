@@ -1,0 +1,35 @@
+entorno="Desarrollo"
+pipeline {
+   agent any
+   
+   stages {
+    
+      stage('Init') {
+          steps('Log-in'){
+            echo 'Log-in'
+            }
+        }
+      stage('entorno Deploy'){
+           stages {
+               
+                stage("Test") {
+                   when {
+                    expression { entorno == 'Desarrollo' }
+                   }
+                   steps {
+                     echo "Hello desa!"
+                   }
+                 }
+                 stage("Test22") {
+                   when {
+                      expression { entorno == 'Validacion' }
+                   }
+                   steps {
+                     echo "Hello valida!"
+                   }
+                 }
+            }
+            
+         }
+    }
+}
