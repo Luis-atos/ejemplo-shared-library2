@@ -1,0 +1,35 @@
+pipeline {
+   agent any
+   stages {
+      stage('Init') {
+          steps('Log-in'){
+            echo 'Log-in'
+            }
+        }
+      stage('Manual Step') {
+            input {
+              message "Hello or Goodbye?"
+              ok "Say!"
+              parameters{choice(choices:['Hello','Bye'], description: 'Users Choice', name: 'CHOICE')}
+            }
+            steps('Input'){
+                echo "choice: ${CHOICE}"
+                echo "choice params.: " + params.CHOICE     //null          
+                echo "choice env: " + env.CHOICE            //Hello 
+            }
+        }
+      stage('Hello') {
+        when{ expression {env.CHOICE == 'Hello'}}       
+          steps('Execute'){
+            echo 'Say Hello'
+            } 
+        }       
+      stage('Bye') {
+        when{ expression {env.CHOICE == 'Bye'}}
+          steps('Execute'){
+            echo 'Say Bye'    
+              }
+        }
+      
+    }
+}
