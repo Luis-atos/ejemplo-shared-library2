@@ -6,7 +6,7 @@ pipeline {
        stage('antes'){
            steps('Execute'){
                echo "mensaje"
-               mail to: 'plopga6@mde.es', from: 'DIVINDES_OT_ENTORNOS@mde.es', subject: "JENKINS PRE: ${env.JOB_NAME}", body: "Se ha lanzado el job ${env.JOB_NAME}"
+              // mail to: 'plopga6@mde.es', from: 'DIVINDES_OT_ENTORNOS@mde.es', subject: "JENKINS PRE: ${env.JOB_NAME}", body: "Se ha lanzado el job ${env.JOB_NAME}"
 
            }
        }
@@ -14,7 +14,8 @@ pipeline {
         stage('send') {
           steps('Execute'){
               echo "mensaje"
-         //  emailext ( body: 'Test Message', subject: 'Test Subject',  to: 'plopga6@mde.es')
+           emailext ( body: 'Test Message', from: 'DIVINDES_OT_ENTORNOS@mde.es', subject: 'Test Subject',  to: 'plopga6@mde.es')
+       // mail bcc: '', body: '''prueba gracias''', cc: '', from: 'jenkins_divindes@mde.es', replyTo: '', subject: 'prueba', to: 'lmunma1@ext.mde.es'
             }
         }
         
