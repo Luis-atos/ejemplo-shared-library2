@@ -1,0 +1,23 @@
+
+****** ver antes configuracion en jenkins *********
+pipeline {
+   agent any
+   stages {
+       stage('antes'){
+           steps('Execute'){
+               echo "mensaje"
+               mail to: 'plopga6@mde.es', from: 'DIVINDES_OT_ENTORNOS@mde.es', subject: "JENKINS PRE: ${env.JOB_NAME}", body: "Se ha lanzado el job ${env.JOB_NAME}"
+
+           }
+       }
+      
+        stage('send') {
+          steps('Execute'){
+              echo "mensaje"
+         //  emailext ( body: 'Test Message', subject: 'Test Subject',  to: 'plopga6@mde.es')
+            }
+        }
+        
+   }  
+    
+}
