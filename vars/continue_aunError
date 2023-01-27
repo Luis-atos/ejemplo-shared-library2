@@ -1,3 +1,50 @@
+def ENVIRONMENT = "QA"
+def PRODUCT_NAME = "PRODUCT-12"
+pipeline {
+    agent any
+    stages{
+        stage('Testing-1') {
+            when{
+            expression{
+                    ENVIRONMENT == "QA"
+                }
+            }
+            steps {
+                script {
+                    if (PRODUCT_NAME == "PRODUCT-1"){
+                        echo "Reached Here ${ENVIRONMENT} - ${PRODUCT_NAME}"
+                    }
+                    else{
+                        
+                       stageResult = "ABORTED"
+                        echo "PRODUCT not Available for Testing -->" + stageResult   
+                       echo "ELSE...."
+                       stageResult = 'FAILURE'
+                        echo "PRODUCT not Available for Testing" + stageResult
+                        
+                        
+                        catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
+                                               echo "catchError...."
+                                               sh "exit 1"
+                                        }
+
+                    }
+                }
+            }
+        }
+
+        stage('Testing-2'){
+            steps{
+                sh '''
+                    echo "Reached Second Stage"
+                '''
+            }
+        }
+    }
+}    
+
+
+***********************
 pipeline {
     agent any
     stages {
