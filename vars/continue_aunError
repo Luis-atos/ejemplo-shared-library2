@@ -21,9 +21,14 @@ pipeline {
                        echo "ELSE...."
                        stageResult = 'FAILURE'
                         echo "PRODUCT not Available for Testing" + stageResult
+                        /************************/
+                        catchError(buildResult: 'SUCCESS', stageResult: 'SUCCESS') {  --> entra pero lo pone en verde
+                                               echo "catchError...."
+                                               sh "exit 1"
+                                        }
+                        /***********************/
                         
-                        
-                        catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
+                        catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {  --> entra pero lo pone en rojo
                                                echo "catchError...."
                                                sh "exit 1"
                                         }
