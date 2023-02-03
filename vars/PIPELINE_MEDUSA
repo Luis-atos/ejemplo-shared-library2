@@ -1,0 +1,21 @@
+pipeline {
+    agent any
+    stages{
+        stage('Deploy with tower') {
+            steps{
+                call_awx();
+            }
+        }
+    }
+}
+
+def call_awx(){
+    ansibleTower(
+            towerServer: 'Ansible_Tower',
+            jobTemplate: 'Despliegue_medusa',
+            extraVars: '''---
+            my_var: "Jenkins Test"
+            servicio: "nginx"
+            '''
+        )
+}
