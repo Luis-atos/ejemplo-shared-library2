@@ -1,0 +1,25 @@
+def app_jenkins
+pipeline {
+    agent any
+    stages {
+        stage('Checkout params') {
+           steps {
+               script {
+                  app_jenkins = "experimento_impoexpo_develop"
+                  echo "salida --< ${app_jenkins}"
+                  call_awx(app_jenkins)
+               }
+            }
+        }
+    }
+}
+def call_awx(app_jenkins){
+    echo "salida dentro--< ${app_jenkins}"
+    ansibleTower(
+            towerServer: 'Ansible_Tower',
+            jobType: 'run',
+            jobTemplate: 'prueba_',
+            extraVars: """---
+            variable_msg: \"${app_jenkins}\""""
+        )
+}
