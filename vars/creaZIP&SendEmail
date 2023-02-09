@@ -1,3 +1,53 @@
+def fich=''
+pipeline {
+   agent any
+   stages {
+       stage('antes'){
+           steps('Execute'){
+               echo "mensaje"
+              // mail to: 'plopga6@mde.es', from: 'DIVINDES_OT_ENTORNOS@mde.es', subject: "JENKINS PRE: ${env.JOB_NAME}", body: "Se ha lanzado el job ${env.JOB_NAME}"
+
+           }
+       }
+      stage('dato'){
+           steps('Execute'){
+               script{
+               echo "mensaje"
+      
+      def userInput = input(
+                 id: 'userInput', message: 'Esta tarea no despliega en PRODUCCIÓN\n\n Si no existen errores y acepta continuar', 
+                 parameters: [
+                 [$class: 'TextParameterDefinition', defaultValue: 'Esta tarea no despliega en PRODUCCIÓN\n\n Si no existen errores y acepta continuar, se hará merge con Rama Master y se eliminará la Rama', name: 'Config']
+                ])
+                              
+
+              // mail to: 'plopga6@mde.es', from: 'DIVINDES_OT_ENTORNOS@mde.es', subject: "JENKINS PRE: ${env.JOB_NAME}", body: "Se ha lanzado el job ${env.JOB_NAME}"
+             }
+           }
+       }
+        stage('send') {
+          steps('Execute'){
+              script{
+              echo "mensaje"
+       //    emailext ( body: 'Pedro es una prueba ...Test Message', from: 'lmunma1@ext.mde.es', subject: 'Test Subject',  to: 'plopga6@mde.es; lmunma1@ext.mde.es;')
+fich = "log_experimento_impoexpo_develop12.zip"
+emailext(
+attachLog: true,
+body: "Pedro es una prueba ...El ZIP deria el log creado de la ejecucion. /n La maquina 120D no esta autorizada para enviar.Saludos",
+from: 'lmunma1@ext.mde.es',
+attachmentsPattern: fich,
+compressLog: true,
+subject:'Test Subject',
+to: 'lmunma1@ext.mde.es ')
+
+       // mail bcc: '', body: '''prueba gracias''', cc: '', from: 'jenkins_divindes@mde.es', replyTo: '', subject: 'prueba', to: 'lmunma1@ext.mde.es'
+            
+          }
+          }
+        }
+   }  
+}
+***********
 pipeline {
    agent any
    stages {
