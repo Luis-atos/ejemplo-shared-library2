@@ -1,0 +1,21 @@
+pipeline {
+    agent any
+    stages {
+        stage('Test') {
+            steps {
+                echo "Mensaje de steps"
+            }
+        }
+    }
+    post {
+        always {
+           echo "Mensaje de siempre"
+        }
+        success{
+             echo "Mensaje de correcto"
+        }
+        failure {
+            echo "Mensaje de fallo"
+        }
+    }
+}
