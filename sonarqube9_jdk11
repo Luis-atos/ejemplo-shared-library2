@@ -1,0 +1,78 @@
+pipeline {
+
+  agent any   
+  
+  /*environment {
+        K8S_DESA_CREDENTIAL  = credentials('kubernetes-desa')
+  }*/
+  
+  stages {
+     stage ('Build Backend "COMER"') {
+       steps {
+            sh '''
+              java -version
+              cd source
+              mvn -version
+              # mvn clean package 
+            '''
+            }
+		  }
+      stage ('Unit Test Backend "COMER"') {
+       steps {
+            sh '''              
+              cd source
+             # mvn test
+            '''
+            }
+        /*post {
+          always {
+             junit 'target/surefire-reports/*.xml'
+          }
+        }*/
+      }
+      
+     stage('SonarQube Test') {
+        tools {
+         jdk "Java11" 
+        }
+         steps {
+                
+                sh '''
+                java -version
+                cd source
+                mvn dependency:copy-dependencies clean package -s /opt/maven/conf/settings.xml
+                mvn dependency:copy-dependencies sonar:sonar -s /opt/maven/conf/settings.xml
+                #mvn -Dmaven.test.skip=true -DskipTests -U -e -f source/pom.xml clean install
+                '''
+           }
+         }
+    /*  stage ('Build and Push Image') {
+        steps { 
+          container('kaniko') {
+             sh '''
+             /kaniko/executor --context `pwd` --destination ghcr.io/es-mad-sermas-integracam/backend-patient-hotfix:${BUILD_NUMBER}
+             '''
+            }
+          }
+        }
+		
+     stage ('Deploy backend-patient') {
+         steps {
+           container('kubectl') {
+              sh ''' 
+                     curl -LO https://dl.k8s.io/release/v1.24.0/bin/linux/amd64/kubectl
+                     chmod +x kubectl
+                     cp $K8S_TEST_CREDENTIAL config
+                     mkdir $HOME/.kube
+                     mv config $HOME/.kube/config
+                     cd deployhf
+                     sed -i "s/<TAG>/${BUILD_NUMBER}/" 2-deploy.yml
+                     kubectl delete -f ./
+                     kubectl apply -f ./                     
+              '''
+            }
+         }
+       }*/ 
+	   
+   }
+}
