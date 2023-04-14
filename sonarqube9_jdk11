@@ -2,6 +2,149 @@ pipeline {
 
   agent any   
   
+  /*environment {
+        K8S_DESA_CREDENTIAL  = credentials('kubernetes-desa')
+  }*/
+  
+    environment {
+        REMOTE_HOST = "srvcceacml141d"
+        REMOTE_USER = "root"
+        REMOTE_DIR = "/opt/aplicaciones/comer/"
+        REMOTE_CONF_DIR = "/opt/aplicaciones/comer/conf/"
+        REMOTE_PID_FILE = "/opt/aplicaciones/comer/pid/comer.pid"
+
+        JAR_COMER = "comer-aplicacion.jar"
+        CONF_FILE = "application.properties"
+
+        LOCAL_FILE = "source/comer-aplicacion/target/comer-aplicacion.jar"
+        LOCAL_CONF_DIR = "conf/devops/"
+
+    }
+    stages {
+     stage ('Build Backend "COMER"') {
+       tools {
+         jdk "Java11" 
+       }
+       steps {
+            sh '''
+              java -version
+              cd source
+              mvn -version
+              mvn dependency:copy-dependencies clean package -s /opt/maven/conf/settings.xml
+            '''
+            }
+		  }
+      stage ('Unit Test Backend "COMER"') {
+        tools {
+          jdk "Java11" 
+        }
+         steps {
+            sh '''              
+              cd source
+              mvn test -s /opt/maven/conf/settings.xml
+            '''
+            }
+
+        /*post {
+          always {
+             junit 'target/surefire-reports/*.xml'
+          }
+        }*/
+      }
+
+      
+     stage('SonarQube Test') {
+        tools {
+         jdk "Java11" 
+        }
+         steps {
+                
+                sh '''
+                java -version
+                cd source
+                mvn dependency:copy-dependencies sonar:sonar -s /opt/maven/conf/settings.xml
+                #mvn -Dmaven.test.skip=true -DskipTests -U -e -f source/pom.xml clean install
+                '''
+           }
+         }
+
+        stage('Copy file') {
+            steps {
+				withCredentials([sshUserPrivateKey(credentialsId: 'root', keyFileVariable: 'SSH_KEY')]) {
+                    sh '''
+                    # Comprobamos que el fichero de pid existe y no esta vacio
+                    if ssh -i $SSH_KEY $REMOTE_USER@$REMOTE_HOST '[ -s $PID_FILE ]'; then
+                        # Si el fichero no esta vacio leemos el pid
+                        PID=$(ssh -i $SSH_KEY $REMOTE_USER@$REMOTE_HOST 'cat $PID_FILE')
+                        echo "Encontrado PID $PID en $PID_FILE"
+                        
+                        # Comprobamos que el proceso esta vivo
+                        if ssh -i $SSH_KEY $REMOTE_USER@$REMOTE_HOST "kill -0 $PID"; then
+                            echo "Proceso $PID esta corriendo en $REMOTE_HOST, matamos el proceso..."
+                            ssh -i $SSH_KEY $REMOTE_USER@$REMOTE_HOST "kill $PID"
+                            sleep 10
+                            if ssh -i $SSH_KEY $REMOTE_USER@$REMOTE_HOST "kill -0 $PID"; then
+                                echo "Proceso $PID TODAVIA esta corriendo en $REMOTE_HOST, forzando el kill..."
+                                ssh -i $SSH_KEY $REMOTE_USER@$REMOTE_HOST "kill -9 $PID"
+                            else
+                                echo "Proceso $PID ha sido matado en $REMOTE_HOST"
+                            fi
+                        else
+                            echo "El proceso $PID no esta corriendo en $REMOTE_HOST"
+                        fi
+                    else
+                        echo "El fichero PID $PID_FILE no existe o esta vacio en $REMOTE_HOST, continuamos"
+                    fi
+                      #Borramos el jar
+                        ssh -o StrictHostKeyChecking=no -i $SSH_KEY "$REMOTE_USER@$REMOTE_HOST" "rm -f $REMOTE_DIR$JAR_COMER"
+                      #Copiamos el nuevo jar
+                        scp -o StrictHostKeyChecking=no -i $SSH_KEY "$LOCAL_FILE" "$REMOTE_USER@$REMOTE_HOST:$REMOTE_DIR$JAR_COMER"
+                      #Copiamos el fichero de configuración
+                        scp -o StrictHostKeyChecking=no -i $SSH_KEY "$LOCAL_CONF_DIR$CONF_FILE" "$REMOTE_USER@$REMOTE_HOST:$REMOTE_CONF_DIR$CONF_FILE"
+                      #Arrancamos el servicio.
+                      	ssh -o StrictHostKeyChecking=no -i $SSH_KEY "$REMOTE_USER@$REMOTE_HOST" "nohup ${REMOTE_DIR}comer.sh > /dev/null 2>&1 &"
+                    '''
+                }
+            }
+        }
+
+    /*  stage ('Build and Push Image') {
+        steps { 
+          container('kaniko') {
+             sh '''
+             /kaniko/executor --context `pwd` --destination ghcr.io/es-mad-sermas-integracam/backend-patient-hotfix:${BUILD_NUMBER}
+             '''
+            }
+          }
+        }
+		
+     stage ('Deploy backend-patient') {
+         steps {
+           container('kubectl') {
+              sh ''' 
+                     curl -LO https://dl.k8s.io/release/v1.24.0/bin/linux/amd64/kubectl
+                     chmod +x kubectl
+                     cp $K8S_TEST_CREDENTIAL config
+                     mkdir $HOME/.kube
+                     mv config $HOME/.kube/config
+                     cd deployhf
+                     sed -i "s/<TAG>/${BUILD_NUMBER}/" 2-deploy.yml
+                     kubectl delete -f ./
+                     kubectl apply -f ./                     
+              '''
+            }
+         }
+       }*/ 
+	   
+    }
+}
+  	
+
+****************
+pipeline {
+
+  agent any   
+  
   stages {
      stage ('Build Backend "SIACUDEF"') {
        steps {
