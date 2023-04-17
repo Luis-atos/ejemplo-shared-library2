@@ -2,6 +2,72 @@ pipeline {
 
   agent any   
   
+  stages {
+     stage ('Build Backend "SIACUDEF"') {
+       steps {
+            sh '''
+              java -version
+              cd source
+              mvn -version
+              mvn -U dependency:copy-dependencies clean package -s /opt/maven/conf/settings.xml
+            '''
+            }
+		  }
+      stage ('Unit Test Backend "SIACUDEF"') {
+         steps {
+            sh '''              
+              cd source
+              mvn test -s /opt/maven/conf/settings.xml
+            '''
+            }
+        /*post {
+          always {
+             junit 'target/surefire-reports/*.xml'
+          }
+        }*/
+      }
+
+     
+     stage('SonarQube Test') {
+       tools {
+         jdk "Java11" 
+        }
+         steps {
+                
+                sh '''
+                java -version
+                cd source
+                mvn dependency:copy-dependencies sonar:sonar -s /opt/maven/conf/settings.xml
+                '''
+           }
+         }
+         stage('Despliegue Tomcat') {
+         steps {
+                sh '''
+                ssh root@SRVCCEACML139D  systemctl stop apache_MAQUETA.service
+                ssh root@SRVCCEACML139D  mkdir -p /opt/apache/apache_MAQUETA/www/html/SIACUDEF
+                scp source/target/SIACUDEF-static.zip root@SRVCCEACML139D:/opt/apache/apache_MAQUETA/www/html/SIACUDEF
+                ssh root@SRVCCEACML139D  unzip -qo /opt/apache/apache_MAQUETA/www/html/SIACUDEF/SIACUDEF-static.zip -d /opt/apache/apache_MAQUETA/www/html/SIACUDEF
+            ssh root@SRVCCEACML139D rm /opt/apache/apache_MAQUETA/www/html/SIACUDEF/SIACUDEF-static.zip
+            ssh root@SRVCCEACML139D systemctl start apache_MAQUETA.service
+            
+                ssh root@SRVCCEACML139D systemctl stop tomcat_SIACUDEF.service
+                ssh root@SRVCCEACML139D  rm -rf /opt/tomcat_SIACUDEF/webapps/SIACUDEF/
+		ssh root@SRVCCEACML139D  rm -f /opt/tomcat_SIACUDEF/webapps/SIACUDEF.war
+		scp source/target/SIACUDEF.war root@SRVCCEACML139D:/opt/tomcat_SIACUDEF/webapps
+                ssh root@SRVCCEACML139D systemctl start tomcat_SIACUDEF.service
+                '''
+           }
+         }
+   }
+}
+
+
+**************
+pipeline {
+
+  agent any   
+  
   /*environment {
         K8S_DESA_CREDENTIAL  = credentials('kubernetes-desa')
   }*/
