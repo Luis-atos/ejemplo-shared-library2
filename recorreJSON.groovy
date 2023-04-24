@@ -1,5 +1,68 @@
 pipeline {
     agent any
+     environment {
+        NAME_JOB = 'true'
+        USR_JOB    = 'sqlite'
+    }
+
+    stages {
+        stage('Sample') {
+          steps {
+            script {
+                
+def jsonStringDos = ''' {
+    "apps": {
+        "AGT": 
+        [
+            {"rama":"develop", "entorno":"Desarrollo,Validacion", "usuario":"lmunma1", "variable":4},
+            {"rama":"develop", "entorno":"Desarrollo,Validacion", "usuario":"lmunma1", "variable":4},
+            {"rama":"develop", "entorno":"Desarrollo,Validacion", "usuario":"lmunma1", "variable":4}
+        ],
+        "SIACUDEF": [
+            {"rama":"develop", "entorno":"Desarrollo,Validacion", "usuario":"lmunma1", "variable":4},
+            {"rama":"develop", "entorno":"Desarrollo,Validacion", "usuario":"lmunma1", "variable":4},
+            {"rama":"develop", "entorno":"Desarrollo,Validacion", "usuario":"lmunma1", "variable":4}
+             ]
+            }
+}'''
+                userID = currentBuild.getRawBuild().getCauses()[0].getUserId()
+                echo "${env.JOB_NAME}"
+                echo "${env.BRANCH_NAME}"
+                 echo "${userID}"
+                
+                def propsDos = readJSON text: jsonStringDos
+                def app1 = propsDos.apps['SIACUDEF'].rama
+                def app2 = propsDos.apps
+                def longitud = app2.size()
+                echo "$app1"
+                echo "$app2"
+                echo "$longitud"
+                def listaApp = propsDos.apps.SIACUDEF
+                
+                 if (listaApp!=null){
+                      println listaApp
+                     println listaApp.size()
+                     longitud = listaApp.size()
+                    for(int i = 0;i<longitud;i++) {
+                      println(listaApp[i].rama)
+                      println(listaApp[i].entorno)
+                      println(listaApp[i].usuario)
+                    }
+                 }else{
+                     echo "No hay limites"
+                 }
+              //  for(int i = 0;i<longitud;i++) {
+              //        println(propsDos.apps[i].value);
+              //  }
+               
+            }
+          }
+    }
+    }
+}
+********************************
+pipeline {
+    agent any
 
     stages {
         stage('Sample') {
